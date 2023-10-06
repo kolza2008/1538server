@@ -5,6 +5,8 @@ from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.orm import mapped_column
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm import relationship
+from sqlalchemy.future import select
+from generate import generate_chunk
 from sqlalchemy.orm import Mapped
 from sqlalchemy import ForeignKey
 import asyncio
@@ -47,6 +49,20 @@ class Chunk(Base):
     x: Mapped[int]
     y: Mapped[int]
     content: Mapped[str]
+
+    @staticmethod
+    async def get_chunk(x, y):
+        session = async_session()
+
+        chunk = await session.execute(select(Chunk).where(Chunk.x == x and Chunk.y == y))
+        chunk = chunk.one_or_none()[0]
+
+        if chunk == None:
+            chunk = generate_chunk(x, y)
+            session.add(chunk)
+            session.commit()
+
+        return chunk    
 
 
 async def start():

@@ -20,6 +20,8 @@ wslist = []
     | - ошибка, которая должна быть исправлена клиентом
     $ - подгрузка статичной инфы
     . - стейт игры
+    ? - запрос статики
+    @ - запрос на изменение стейта
 """
 
 
@@ -81,9 +83,17 @@ async def my_first_websocket_route(request):
 
   async for msg in ws:
     if msg.type == WSMsgType.TEXT:
-      data = json.loads(state[id_].state)
-      data['position'][0] += int(msg.data.split('.')[0])
-      data['position'][1] += int(msg.data.split('.')[1])
+      if msg.data[0] == "@":
+        data = json.loads(state[id_].state)
+        data['position'][0] += int(msg.data[1:].split('.')[0])
+        data['position'][1] += int(msg.data[1:].split('.')[1])
+      elif msg.data[0] == "?":
+        msgtype = msg.data[1:].split('.')[0]
+        if msgtype == "chunk":
+          coords = [int(msg.data[1:].split('.')[1]), int(msg.data[1:].split('.')[2])]
+          chunk = models.Chunk.get_chunk(coords[0], coords[1])
+          await ws.send_message(f'${coords[0]}.{coords[1]}|{chunk.content}')
+
       state[id_].state = json.dumps(data)
     elif msg.type == WSMsgType.ERROR:
       print('ws connection closed with exception %s' % ws.exception())
@@ -94,7 +104,7 @@ async def my_first_websocket_route(request):
 async def broadcast_user(ws):
   while True:
     await ws.send_str(
-        json.dumps({
+          "." + json.dumps({
             k: {
                 'id': v.id,
                 'name': v.nickname,
@@ -107,7 +117,7 @@ async def broadcast_user(ws):
 
 
 async def create_user(request):
-  payload = await request.post()
+  payload = await request.json()
 
   try:
     user = models.User(nickname=payload.get('login'),
@@ -124,7 +134,7 @@ async def create_user(request):
 
 
 async def get_token(request):
-  payload = await request.post()
+  payload = await request.json()
 
   login = payload.get('login')
   password = payload.get('password')
@@ -171,7 +181,7 @@ cors = aiohttp_cors.setup(app,
                           })
 
 app.router.add_get('/ws', my_first_websocket_route)
-app.router.add_put('/api/user', create_user)
+app.router.add_post('/api/user/new', create_user)
 app.router.add_post('/api/user', get_token)
 
 for route in list(app.router.routes()):
@@ -179,4 +189,4 @@ for route in list(app.router.routes()):
 
 asyncio.run(models.start())
 asyncio.run(chunk_update())
-web.run_app(app, host='127.0.0.1')
+web.run_app(app, host='0.0.0.0')
