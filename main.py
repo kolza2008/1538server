@@ -94,7 +94,7 @@ async def my_first_websocket_route(request):
 async def broadcast_user(ws):
   while True:
     await ws.send_str(
-        json.dumps({
+          "." + json.dumps({
             k: {
                 'id': v.id,
                 'name': v.nickname,
@@ -107,7 +107,7 @@ async def broadcast_user(ws):
 
 
 async def create_user(request):
-  payload = await request.post()
+  payload = await request.json()
 
   try:
     user = models.User(nickname=payload.get('login'),
@@ -124,7 +124,7 @@ async def create_user(request):
 
 
 async def get_token(request):
-  payload = await request.post()
+  payload = await request.json()
 
   login = payload.get('login')
   password = payload.get('password')
@@ -171,7 +171,7 @@ cors = aiohttp_cors.setup(app,
                           })
 
 app.router.add_get('/ws', my_first_websocket_route)
-app.router.add_put('/api/user', create_user)
+app.router.add_post('/api/user/new', create_user)
 app.router.add_post('/api/user', get_token)
 
 for route in list(app.router.routes()):
@@ -179,4 +179,4 @@ for route in list(app.router.routes()):
 
 asyncio.run(models.start())
 asyncio.run(chunk_update())
-web.run_app(app, host='127.0.0.1')
+web.run_app(app, host='0.0.0.0')
