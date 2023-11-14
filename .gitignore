@@ -1,5 +1,5 @@
-/__pycache__
 .replit
 poetry.lock
 pyproject.toml
 /.pythonlibs
+__pycache__
