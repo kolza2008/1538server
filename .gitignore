@@ -1,7 +1,5 @@
-/__pycache__
-/.pythonlibs
-replit.nix
 .replit
 poetry.lock
 pyproject.toml
-database.db
+/.pythonlibs
+
