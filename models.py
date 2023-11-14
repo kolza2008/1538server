@@ -15,40 +15,40 @@ DATABASE_URL = "sqlite+aiosqlite:///database.db"
 
 engine = create_async_engine(DATABASE_URL, echo=True)
 async_session = sessionmaker(
-    engine, class_=AsyncSession, expire_on_commit=False
+		engine, class_=AsyncSession, expire_on_commit=False
 )
 
 
 class Base(AsyncAttrs, DeclarativeBase):
-    pass
+		pass
 
 class Player(Base):
-    __tablename__ = "players"
+		__tablename__ = "players"
 
-    id: Mapped[int] = mapped_column(primary_key=True)   
-    nickname: Mapped[str] 
-    appearance: Mapped[str]
-    skills: Mapped[str]
-    state: Mapped[str]
-    owner: Mapped[int] = mapped_column(ForeignKey('users.id'))
+		id: Mapped[int] = mapped_column(primary_key=True)	 
+		nickname: Mapped[str] 
+		appearance: Mapped[str]
+		skills: Mapped[str]
+		state: Mapped[str]
+		owner: Mapped[int] = mapped_column(ForeignKey('users.id'))
 
 class User(Base):
-    __tablename__ = "users"
+		__tablename__ = "users"
 
-    id: Mapped[int] = mapped_column(primary_key=True)
-    nickname: Mapped[str] = mapped_column(unique=True)
-    password_hash: Mapped[str] 
-    players: Mapped[list] = relationship(Player, lazy="selectin")
+		id: Mapped[int] = mapped_column(primary_key=True)
+		nickname: Mapped[str] = mapped_column(unique=True)
+		password_hash: Mapped[str] 
+		players: Mapped[list] = relationship(Player, lazy="selectin")
 
 class Chunk(Base):
-    __tablename__ = "chunks"    
+		__tablename__ = "chunks"		
 
-    id: Mapped[int] = mapped_column(primary_key=True)
-    x: Mapped[int]
-    y: Mapped[int]
-    content: Mapped[str]
+		id: Mapped[int] = mapped_column(primary_key=True)
+		x: Mapped[int]
+		y: Mapped[int]
+		content: Mapped[str]
 
 
 async def start():
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
+		async with engine.begin() as conn:
+				await conn.run_sync(Base.metadata.create_all)
