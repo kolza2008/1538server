@@ -6,20 +6,20 @@ import random
 import json
 
 def get_neighboor(map, x, y, dx, dy):
-    #print(map)
-    if dx < 0 and x == 0:
-        return None
-    if dx == 1 and x == (len(map[0])-1):
-        return None
-    if dy < 0 and y == 0:
-        return None
-    if dy == 1 and y == (len(map[0]))-1:
-        return None
-    try:
-        return map[y+dy][x+dx]
-    except:
-        print(y+dy, x+dx, dx,)
-        raise ZeroDivisionError
+		#print(map)
+		if dx < 0 and x == 0:
+				return None
+		if dx == 1 and x == (len(map[0])-1):
+				return None
+		if dy < 0 and y == 0:
+				return None
+		if dy == 1 and y == (len(map[0]))-1:
+				return None
+		try:
+				return map[y+dy][x+dx]
+		except:
+				print(y+dy, x+dx, dx,)
+				raise ZeroDivisionError
 
 def generate_chunk(x, y):
     data = [[0 for i in range(16)] for j in range(16)]
@@ -80,13 +80,13 @@ def generate_chunk(x, y):
     return Chunk(x=x, y=y, content=json.dumps(data))
 
 def merge_chunks(c1, c2, horizontal):
-    result = []
-    if horizontal:
-        for i in range(len(c1)):
-            result.append([*c1[i], *c2[i]])
-    else:
-        result = [*c1, *c2]
-    return result
+		result = []
+		if horizontal:
+				for i in range(len(c1)):
+						result.append([*c1[i], *c2[i]])
+		else:
+				result = [*c1, *c2]
+		return result
 
 def _3on3():
     result = []

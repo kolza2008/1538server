@@ -2,6 +2,4 @@
 poetry.lock
 pyproject.toml
 /.pythonlibs
-replit.nix
 __pycache__
-database.db
