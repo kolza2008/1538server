@@ -29,9 +29,11 @@ async def get_token(request):
 
 	session = models.async_session()
 
-	user = (await session.execute(select(models.User).where(models.User.nickname == login))).one_or_none()[0]
+	user = (await session.execute(select(models.User).where(models.User.nickname == login))).one_or_none()
 	if user == None:
 		raise web.HTTPBadRequest("user's name is not found")
+	else:
+		user = user[0]
 	if user.password_hash != hashlib.md5(password.encode('utf8')).hexdigest():
 		raise web.HTTPBadRequest("wrong password")
 

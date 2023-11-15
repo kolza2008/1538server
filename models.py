@@ -7,10 +7,8 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm import relationship
 from sqlalchemy.orm import Mapped
 from sqlalchemy import ForeignKey
+from config import *
 import asyncio
-
-
-DATABASE_URL = "sqlite+aiosqlite:///database.db"
 
 
 engine = create_async_engine(DATABASE_URL, echo=True)
