@@ -22,7 +22,6 @@ class Base(AsyncAttrs, DeclarativeBase):
 
 class Player(Base):
 		__tablename__ = "players"
-
 		id: Mapped[int] = mapped_column(primary_key=True)	 
 		nickname: Mapped[str] 
 		appearance: Mapped[str]
@@ -32,7 +31,6 @@ class Player(Base):
 
 class User(Base):
 		__tablename__ = "users"
-
 		id: Mapped[int] = mapped_column(primary_key=True)
 		nickname: Mapped[str] = mapped_column(unique=True)
 		password_hash: Mapped[str] 
@@ -40,11 +38,18 @@ class User(Base):
 
 class Chunk(Base):
 		__tablename__ = "chunks"		
-
 		id: Mapped[int] = mapped_column(primary_key=True)
 		x: Mapped[int]
 		y: Mapped[int]
 		content: Mapped[str]
+
+class Item(Base):
+	__tablename__ = 'items'
+	id: Mapped[int] = mapped_column(primary_key=True)
+	name: Mapped[str]
+	description: Mapped[str]
+	state: Mapped[str]
+	category: Mapped[str]
 
 
 async def start():
