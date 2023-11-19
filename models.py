@@ -5,6 +5,7 @@ from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.orm import mapped_column
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm import relationship
+from sqlalchemy.future import select
 from sqlalchemy.orm import Mapped
 from sqlalchemy import ForeignKey
 from config import *
@@ -18,30 +19,41 @@ async_session = sessionmaker(
 
 
 class Base(AsyncAttrs, DeclarativeBase):
-		pass
+	pass
 
 class Player(Base):
-		__tablename__ = "players"
-		id: Mapped[int] = mapped_column(primary_key=True)	 
-		nickname: Mapped[str] 
-		appearance: Mapped[str]
-		skills: Mapped[str]
-		state: Mapped[str]
-		owner: Mapped[int] = mapped_column(ForeignKey('users.id'))
+	__tablename__ = "players"
+	id: Mapped[int] = mapped_column(primary_key=True)	 
+	nickname: Mapped[str] 
+	appearance: Mapped[str]
+	skills: Mapped[str]
+	state: Mapped[str]
+	owner: Mapped[int] = mapped_column(ForeignKey('users.id'))
 
 class User(Base):
-		__tablename__ = "users"
-		id: Mapped[int] = mapped_column(primary_key=True)
-		nickname: Mapped[str] = mapped_column(unique=True)
-		password_hash: Mapped[str] 
-		players: Mapped[list] = relationship(Player, lazy="selectin")
+	__tablename__ = "users"
+	id: Mapped[int] = mapped_column(primary_key=True)
+	nickname: Mapped[str] = mapped_column(unique=True)
+	password_hash: Mapped[str] 
+	players: Mapped[list] = relationship(Player, lazy="selectin")
 
 class Chunk(Base):
-		__tablename__ = "chunks"		
-		id: Mapped[int] = mapped_column(primary_key=True)
-		x: Mapped[int]
-		y: Mapped[int]
-		content: Mapped[str]
+	__tablename__ = "chunks"		
+	id: Mapped[int] = mapped_column(primary_key=True)
+	x: Mapped[int]
+	y: Mapped[int]
+	content: Mapped[str]
+
+	@staticmethod
+	async def get_chunk(x, y):
+		session = async_session()
+		chunks = (await session.execute(select(Chunk).where(Chunk.x == x and Chunk.y == y))).one_or_none()
+		if chunks != None:
+			return chunks[0]
+		chunk = generate_chunk(x, y)
+		session.add(chunk)
+		await session.commit()
+		return chunk
 
 class Item(Base):
 	__tablename__ = 'items'
@@ -53,5 +65,5 @@ class Item(Base):
 
 
 async def start():
-		async with engine.begin() as conn:
-				await conn.run_sync(Base.metadata.create_all)
+	async with engine.begin() as conn:
+		await conn.run_sync(Base.metadata.create_all)
