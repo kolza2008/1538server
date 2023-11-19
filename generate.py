@@ -98,13 +98,18 @@ def _3on3():
 		result.append(merge_chunks(merge_chunks(json.loads(row[0].content), json.loads(row[1].content), True), json.loads(row[2].content), True))
 	return merge_chunks(merge_chunks(result[0], result[1], False), result[2], False)
 
+chunksession = async_session()
+chunkspool = {}
+
 async def get_chunk(x, y):
-	session = async_session()
-	chunks = (await session.execute(select(Chunk).where(Chunk.x == x and Chunk.y == y))).one_or_none()
+	if [x, y] in chunkspool.keys():
+		return chunkspool[[x, y]]
+	chunks = (await chunksession.execute(select(Chunk).where(Chunk.x == x and Chunk.y == y))).one_or_none()
 	if chunks != None:
+		chunkspool[[x, y]] = chunks[0]
 		return chunks[0]
 	chunk = generate_chunk(x, y)
-	session.add(chunk)
-	await session.commit()
-	session.close()
+	chunksession.add(chunk)
+	await chunksession.commit()
+	chunkspool[[x, y]] = chunk
 	return chunk
