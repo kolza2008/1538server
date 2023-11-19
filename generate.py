@@ -102,14 +102,14 @@ chunksession = async_session()
 chunkspool = {}
 
 async def get_chunk(x, y):
-	if [x, y] in chunkspool.keys():
-		return chunkspool[[x, y]]
+	if (x, y) in chunkspool.keys():
+		return chunkspool[(x, y)]
 	chunks = (await chunksession.execute(select(Chunk).where(Chunk.x == x and Chunk.y == y))).one_or_none()
 	if chunks != None:
-		chunkspool[[x, y]] = chunks[0]
+		chunkspool[(x, y)] = chunks[0]
 		return chunks[0]
 	chunk = generate_chunk(x, y)
 	chunksession.add(chunk)
 	await chunksession.commit()
-	chunkspool[[x, y]] = chunk
+	chunkspool[(x, y)] = chunk
 	return chunk
