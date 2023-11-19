@@ -45,18 +45,6 @@ class Chunk(Base):
 	y: Mapped[int]
 	content: Mapped[str]
 
-	@staticmethod
-	async def get_chunk(x, y):
-		session = async_session()
-		chunks = (await session.execute(select(Chunk).where(Chunk.x == x and Chunk.y == y))).one_or_none()
-		if chunks != None:
-			return chunks[0]
-		chunk = generate_chunk(x, y)
-		session.add(chunk)
-		await session.commit()
-		session.close()
-		return chunk
-
 class Item(Base):
 	__tablename__ = 'items'
 	id: Mapped[int] = mapped_column(primary_key=True)

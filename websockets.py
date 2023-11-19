@@ -1,5 +1,6 @@
 from sqlalchemy.future import select
 from aiohttp import web, WSMsgType
+from generate import *
 from global_ import *
 import json, uuid
 import asyncio
@@ -89,7 +90,7 @@ async def my_first_websocket_route(request):
 							int(msg.data[1:].split('.')[1]),
 							int(msg.data[1:].split('.')[2])
 					]
-					chunk = await models.Chunk.get_chunk(coords[0], coords[1])
+					chunk = await get_chunk(coords[0], coords[1])
 					await ws.send_str(f'${coords[0]}.{coords[1]}|{chunk.content}')
 		elif msg.type == WSMsgType.ERROR:
 			print('ws connection closed with exception %s' % ws.exception())
