@@ -5,8 +5,6 @@ from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.orm import mapped_column
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm import relationship
-from sqlalchemy.future import select
-from generate import generate_chunk
 from sqlalchemy.orm import Mapped
 from sqlalchemy import ForeignKey
 from config import *
