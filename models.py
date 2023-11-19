@@ -8,6 +8,7 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.future import select
 from sqlalchemy.orm import Mapped
 from sqlalchemy import ForeignKey
+from generate import *
 from config import *
 import asyncio
 
