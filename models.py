@@ -6,9 +6,9 @@ from sqlalchemy.orm import mapped_column
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm import relationship
 from sqlalchemy.future import select
+from generate import generate_chunk
 from sqlalchemy.orm import Mapped
 from sqlalchemy import ForeignKey
-from generate import *
 from config import *
 import asyncio
 
@@ -54,6 +54,7 @@ class Chunk(Base):
 		chunk = generate_chunk(x, y)
 		session.add(chunk)
 		await session.commit()
+		session.close()
 		return chunk
 
 class Item(Base):
