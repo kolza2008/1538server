@@ -15,7 +15,7 @@ async def create_user(request):
 		session.add(user)
 		await session.commit()
 	except IntegrityError:
-		raise web.HTTPConflict()
+		raise web.HTTPConflict(text="This nickname is used")
 	return web.json_response({"user_id": user.id})
 
 async def get_token(request):
@@ -31,11 +31,11 @@ async def get_token(request):
 
 	user = (await session.execute(select(models.User).where(models.User.nickname == login))).one_or_none()
 	if user == None:
-		raise web.HTTPBadRequest("user's name is not found")
+		raise web.HTTPBadRequest(text="user's name is not found")
 	else:
 		user = user[0]
 	if user.password_hash != hashlib.md5(password.encode('utf8')).hexdigest():
-		raise web.HTTPBadRequest("wrong password")
+		raise web.HTTPBadRequest(text="wrong password")
 
 	token = secrets.token_urlsafe()
 	tokens.update({token: user.id})

@@ -104,7 +104,7 @@ chunkspool = {}
 async def get_chunk(x, y):
 	if f'{x}:{y}' in chunkspool.keys():
 		return chunkspool[f'{x}:{y}']
-	chunks = (await chunksession.execute(select(Chunk).where(Chunk.x == x and Chunk.y == y))).one_or_none()
+	chunks = (await chunksession.execute(select(Chunk).where(Chunk.x == x).where(Chunk.y == y))).one_or_none()
 	if chunks != None:
 		chunkspool[f'{x}:{y}'] = chunks[0]
 		return chunks[0]
