@@ -87,8 +87,11 @@ class ItemPool:
 		self.pool[id] = proxy
 
 	async def save(self, id = None):
-		for i, j in self.pool.items():
-			j.sync_to()
+		if id == None:
+			for i, j in self.pool.items():
+				j.sync_to()
+		else:
+			self.pool[id].sync_to()
 		self.session.commit()
 
 class PlayerPool:
@@ -109,11 +112,11 @@ class StaticEntitiesPool:
 	pool = dict()
 	session = models.async_session()
 
-	async def add_item(self, id):
+	async def add_item(self, dbid, poolid):
 		item = (await self.session.execute(select(models.StaticEntity).where(models.StaticEntity.id == id))).one_or_none()[0]
 		proxy = StaticEntityProxy(item)
 		proxy.sync_from()
-		self.pool[id] = proxy
+		self.pool[poolid] = proxy
 
 	async def save(self, id = None):
 		for i, j in self.pool.items():

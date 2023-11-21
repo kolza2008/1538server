@@ -1,6 +1,7 @@
 from sqlalchemy.future import select
 from generate import generate_chunk
 from aiohttp import web
+from global_ import *
 import aiohttp_cors
 import asyncio
 import models
@@ -30,10 +31,9 @@ async def preload():
 		session.add(generate_chunk(0, 0))
 		await session.commit()
 
-	"""sentities = (await session.execute(select(models.Chunk))).all()
-	for i in sentities:
-		i.load()
-		static_entities.update({f"stent#{i.id}": i})"""
+	statentities = (await session.execute(select(models.StaticEntity))).all()
+	for entity in statentities:
+		sentities_pool.add_item(entity.id, f"stent#{entity.id}")
 
 app = web.Application()
 cors = aiohttp_cors.setup(app, defaults = {
