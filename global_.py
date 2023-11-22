@@ -7,7 +7,7 @@ static_entities = {}
 
 player_pool = proxies.PlayerPool()
 sentities_pool = proxies.StaticEntitiesPool()
-itempool = proxies.ItemsPool()
+itempool = proxies.ItemPool()
 
 def get_players():
 	return {k: v.json() for k, v in player_pool.pool.items()}
