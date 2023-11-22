@@ -51,6 +51,13 @@ class Item(Base):
 	state: Mapped[str]
 	category: Mapped[str]
 
+class StaticEntity(Base):
+	__tablename__ = "staticentities"
+	id: Mapped[int] = mapped_column(primary_key=True)	 
+	type: Mapped[str] 
+	name: Mapped[str] 
+	state: Mapped[str]
+	category: Mapped[str]
 
 async def start():
 	async with engine.begin() as conn:
