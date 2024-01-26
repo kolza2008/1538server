@@ -3,21 +3,18 @@ import json
 
 
 class Slot:
-    def __init__(self, pool, id, criteria: List[str]):
-        self.id = id
-        self.item = None
+    def __init__(self, pool, criteria: List[str]):
+        self.itemid = None
         self.pool = pool
         self.criteria = criteria #list of avaiable categoies
+    @property
+    def item(self):
+        return self.pool[self.itemid]
     def set(self, id):
-        if self.pool[id].category in self.criteria or self.criteria == []:
-            self.item = self.pool[id]   
-    def json(self):
+        if (self.pool[id].category in self.criteria or self.criteria == []) and id != None:
+            self.itemid = id   
+    def save(self):
         return {
-            "id": self.id,
-            "contain": self.item.json() if self.item else None
+            "item": self.itemid,
+            "criteria": self.criteria
         }
-
-class Container:
-    slots = []
-    def json(self):
-        return {i.id: i.json() for i in self.slots}

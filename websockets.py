@@ -51,7 +51,7 @@ async def my_first_websocket_route(request):
 		player = models.Player(owner=user_id,
 							   nickname=persona['nickname'],
 							   appearance=str(persona['appearance']),
-							   state='{"position": [0, 0], "health": 100}',
+							   state='{"position": [0, 0], "health": 100, "inventory": {"h1": undefined, "c1": undefined, "p1": undefined, "b1": undefined}}',
 							   skills=str(persona['skills']))
 		session.add(player)
 		await session.commit()

@@ -43,14 +43,6 @@ class Chunk(Base):
 	y: Mapped[int]
 	content: Mapped[str]
 
-class Item(Base):
-	__tablename__ = 'items'
-	id: Mapped[int] = mapped_column(primary_key=True)
-	name: Mapped[str]
-	description: Mapped[str]
-	state: Mapped[str]
-	category: Mapped[str]
-
 class StaticEntity(Base):
 	__tablename__ = "staticentities"
 	id: Mapped[int] = mapped_column(primary_key=True)	 
@@ -58,6 +50,22 @@ class StaticEntity(Base):
 	name: Mapped[str] 
 	state: Mapped[str]
 	category: Mapped[str]
+
+class Slot(Base):
+	__tablename__ = 'slots'
+	id: Mapped[str] = mapped_column(primary_key=True)
+	inventory: Mapped[str]
+	item: Mapped[int] = mapped_column(ForeignKey('items.id'))
+	criteria: Mapped[str]
+
+class Item(Base):
+	__tablename__ = 'items'
+	id: Mapped[int] = mapped_column(primary_key=True)
+	name: Mapped[str]
+	description: Mapped[str]
+	state: Mapped[str]
+	category: Mapped[str]
+	
 
 async def start():
 	async with engine.begin() as conn:
